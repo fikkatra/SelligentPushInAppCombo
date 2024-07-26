@@ -5,113 +5,68 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import React, {useCallback, useEffect, useState} from 'react';
+import {Alert, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text} from 'react-native';
+import {notificationPermissionService} from './src/notifications/services/notificationPermissionService';
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [hasPermission, setHasPermission] = useState<boolean>();
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const requestNotificationPermission = useCallback(async () => {
+    const permissionResult = await notificationPermissionService.hasNotificationPermission();
+
+    if (permissionResult) {
+      return true;
+    }
+
+    const {granted, cannotRequest} = await notificationPermissionService.requestNotificationPermission();
+    if (cannotRequest) {
+      Alert.alert(
+        'Permission error',
+        'Notification permission cannot be requested. Manually enable it in the settings',
+      );
+    }
+    return granted;
+  }, []);
+
+  useEffect(() => {
+    const initialize = async () => {
+      const permissionResult = await requestNotificationPermission();
+      setHasPermission(permissionResult);
+    };
+    initialize();
+  }, [requestNotificationPermission]);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.scrollView}>
+        <Text style={styles.title}>Welcome to SelligentPOC</Text>
+        <Text style={{textAlign: 'center'}}>
+          {hasPermission === undefined
+            ? 'Initializing...'
+            : hasPermission
+            ? 'Ready to receive Push and InApp messages'
+            : 'App does not have permission for push notifications. Only InApp messages are supported.'}
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  scrollView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingBottom: 20,
   },
 });
 
