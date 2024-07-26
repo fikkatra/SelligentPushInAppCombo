@@ -57,13 +57,17 @@ function App(): React.JSX.Element {
       <StatusBar barStyle="dark-content" />
       <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.scrollView}>
         <Text style={styles.title}>Welcome to SelligentPushInApp POC</Text>
-        <Text style={{textAlign: 'center'}}>
-          {hasPermission === undefined
-            ? 'Initializing...'
-            : hasPermission
-            ? 'Ready to receive Push and InApp messages'
-            : 'App does not have permission for push notifications. Only InApp messages are supported.'}
-        </Text>
+        {initialized ? (
+          <Text style={{textAlign: 'center'}}>
+            {hasPermission === undefined
+              ? 'Initializing...'
+              : hasPermission
+              ? 'Ready to receive Push and InApp messages'
+              : 'App does not have permission for push notifications. Only InApp messages are supported.'}
+          </Text>
+        ) : (
+          <Text>Initializing...</Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
