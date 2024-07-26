@@ -2,7 +2,7 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 # Getting Started
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+> **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
 ## Step 1: install packages
 
@@ -12,15 +12,12 @@ npm install
 
 ## Step 2: Add files
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+Add the following files:
 
-To start Metro, run the following command from the _root_ of your React Native project:
+- selligent.json (root project directory)
+- android/app/google-services.json
 
-```bash
-npm start
-```
-
-## Step 3: Start your Application
+## Step 3: Start the Application
 
 The setup was only done for Android, iOS is not supported.
 

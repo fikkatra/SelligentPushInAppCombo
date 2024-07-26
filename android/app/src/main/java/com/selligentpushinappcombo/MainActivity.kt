@@ -1,4 +1,4 @@
-package com.selligentpushinappcombo
+package com.kpnwe
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

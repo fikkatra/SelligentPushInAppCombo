@@ -63,3 +63,7 @@ npm-debug.log
 
 # testing
 /coverage
+
+# Selligent
+selligent.json
+android/app/google-services.json

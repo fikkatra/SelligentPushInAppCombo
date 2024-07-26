@@ -74,9 +74,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.selligentpushinappcombo"
+    namespace "com.kpnwe"
     defaultConfig {
-        applicationId "com.selligentpushinappcombo"
+        applicationId "com.kpnwe.q8.dev"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -116,3 +116,6 @@ dependencies {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+
+// For Selligent
+apply plugin: 'com.google.gms.google-services'
