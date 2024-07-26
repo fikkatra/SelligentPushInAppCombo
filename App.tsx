@@ -8,8 +8,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Alert, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text} from 'react-native';
 import {notificationPermissionService} from './src/notifications/services/notificationPermissionService';
+import {notificationService} from './src/notifications/services/notificationService';
+
+const SELLIGENT_USER_ID = 'dd26c515-7ee4-4bcc-900e-14d39c9e0a10';
 
 function App(): React.JSX.Element {
+  const [initialized, setInitialized] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean>();
 
   const requestNotificationPermission = useCallback(async () => {
@@ -31,8 +35,19 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     const initialize = async () => {
+      await notificationService.initialize();
+
       const permissionResult = await requestNotificationPermission();
       setHasPermission(permissionResult);
+      if (permissionResult) {
+        // since we do not use navigation and don't support deeplinking, we can initialize push notifications right away
+        await notificationService.initializePushNotifications();
+      }
+
+      // hardcoded user id for testing purposes
+      await notificationService.login(SELLIGENT_USER_ID);
+
+      setInitialized(true);
     };
     initialize();
   }, [requestNotificationPermission]);
@@ -41,7 +56,7 @@ function App(): React.JSX.Element {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.scrollView}>
-        <Text style={styles.title}>Welcome to SelligentPOC</Text>
+        <Text style={styles.title}>Welcome to SelligentPushInApp POC</Text>
         <Text style={{textAlign: 'center'}}>
           {hasPermission === undefined
             ? 'Initializing...'
